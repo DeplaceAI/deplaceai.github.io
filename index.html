@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Requirements Form</title>
+    <style>
+        /* Apple-inspired design system */
+        :root {
+            --bg-color: #000000;
+/*            --bg-color: rgb(240, 240, 240);*/
+            --text-color: #f5f5f7;
+            --accent-color: rgb(203, 251, 81);
+/*            --accent-color: rgb(95, 60, 25);*/
+            --secondary-bg: #1d1d1f;
+            --input-bg: rgba(255, 255, 255, 0.06);
+            --blur-bg: rgba(30, 30, 32, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Logo container */
+        .logo-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+        
+        .logo {
+            height: 60px;
+            width: auto;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .glass-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: radial-gradient(circle at center, rgba(203, 251, 81, 0.1), transparent 70%);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--text-color), rgba(203, 251, 81, 0.8));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: rgba(245, 245, 247, 0.6);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .form-section {
+            background: var(--secondary-bg);
+            border-radius: 1.2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .form-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+            letter-spacing: -0.01em;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group {
+            position: relative;
+            flex: 1;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 1.2rem;
+            background-color: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.8rem;
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            height: 3.5rem;
+        }
+        
+        textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(203, 251, 81, 0.15);
+        }
+        
+        .form-group label,
+        .input-group label {
+            position: absolute;
+            top: 1.2rem;
+            left: 1.2rem;
+            color: rgba(245, 245, 247, 0.6);
+            pointer-events: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        input:focus + label,
+        input:not(:placeholder-shown) + label,
+        select:focus + label,
+        select:not([value=""]) + label,
+        textarea:focus + label,
+        textarea:not(:placeholder-shown) + label {
+            transform: translateY(-3.2rem);
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(203, 251, 81, 0.8)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2em;
+            padding-right: 2.5rem;
+        }
+        
+        .drop-area {
+            width: 100%;
+            min-height: 200px;
+            border: 2px dashed rgba(203, 251, 81, 0.3);
+            border-radius: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background-color: var(--input-bg);
+            cursor: pointer;
+        }
+        
+        .drop-area:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(203, 251, 81, 0.07);
+            transform: scale(1.01);
+        }
+        
+        .drop-icon {
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+        
+        .drop-area p {
+            margin: 0.5rem 0;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        .drop-area .description {
+            font-size: 0.9rem;
+            color: rgba(245, 245, 247, 0.6);
+            max-width: 80%;
+            text-align: center;
+        }
+        
+        .or-text {
+            color: rgba(245, 245, 247, 0.4) !important;
+            margin: 1rem 0 !important;
+            font-size: 0.85rem !important;
+        }
+        
+        .browse-btn {
+            background-color: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.6rem 1.2rem;
+            margin-top: 0.8rem;
+            font-size: 0.95rem;
+            border-radius: 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .browse-btn:hover {
+            background-color: rgba(203, 251, 81, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn {
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            border-radius: 1.5rem;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+            box-shadow: 0 8px 20px rgba(203, 251, 81, 0.25);
+        }
+        
+        .submit-btn:hover {
+            background-color: rgb(183, 231, 61);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(203, 251, 81, 0.3);
+        }
+        
+        .icon {
+            fill: #000;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+        
+        /* Animated background dots */
+        .bg-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -2;
+            opacity: 0.15;
+        }
+        
+        .bg-dots span {
+            position: absolute;
+            display: block;
+            width: 3px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            animation: float 15s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            .form-section {
+                padding: 1.5rem;
+            }
+            
+            .input-row {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="/Users/eliechelly/Desktop/deplace_mock_website/assets/Deplace Name Logo No-Background Signature.png" alt="Deplace Logo" class="logo">
+    </div>
+    <!-- Background dots animation -->
+    <div class="bg-dots" id="bgDots"></div>
+    
+    <div class="container">
+        <div class="glass-bg"></div>
+        <h1>Dataset Requirements</h1>
+        <h2>Define and customize your data collection needs</h2>
+        
+        <form id="requirementsForm">
+            <!-- New section for dataset metadata -->
+            <div class="form-section">
+                <h3 class="section-title">Dataset Metadata</h3>
+                <div class="input-row">
+                    <div class="input-group">
+                        <input type="text" id="datasetName" placeholder=" " required>
+                        <label for="datasetName">Name the dataset...</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="hoursCount" placeholder=" " min="0" step="0.1" required>
+                        <label for="hoursCount"># of hours</label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <select id="collectionType" required>
+                        <option value="" disabled selected>Type of collection</option>
+                        <option value="human_demos">Human demos</option>
+                        <option value="umis">UMIs</option>
+                        <option value="mocap">MoCap</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3 class="section-title">Detailed Task Description</h3>
+                <div class="form-group">
+                    <textarea id="requirementsInput" placeholder=" "></textarea>
+                    <label for="requirementsInput">Describe your dataset requirements (task, types of annotations, size etc.)</label>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3 class="section-title">Sample Data</h3>
+                <div id="dropArea" class="drop-area">
+                    <div class="drop-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
+                            <path fill="none" d="M0 0h24v24H0z"/>
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="rgb(203, 251, 81)"/>
+                        </svg>
+                    </div>
+                    <p>Drag and drop a sample file here</p>
+                    <p class="description">Upload example data to help us understand your specific requirements</p>
+                    <p class="or-text">- OR -</p>
+                    <button type="button" class="browse-btn">Browse files</button>
+                </div>
+            </div>
+            
+            <div class="btn-container">
+                <button type="submit" class="submit-btn">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Generate the background dots
+        const bgDots = document.getElementById('bgDots');
+        const dotsCount = 50;
+        
+        for (let i = 0; i < dotsCount; i++) {
+            const dot = document.createElement('span');
+            const size = Math.random() * 4;
+            const posX = Math.floor(Math.random() * window.innerWidth);
+            
+            dot.style.width = `${size}px`;
+            dot.style.height = `${size}px`;
+            dot.style.left = `${posX}px`;
+            dot.style.top = `${window.innerHeight + 100}px`;
+            dot.style.animationDelay = `${Math.random() * 10}s`;
+            dot.style.animationDuration = `${Math.random() * 10 + 15}s`;
+            
+            bgDots.appendChild(dot);
+        }
+        
+        // Form submission
+        document.getElementById('requirementsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const datasetName = document.getElementById('datasetName').value;
+            const hoursCount = document.getElementById('hoursCount').value;
+            const collectionType = document.getElementById('collectionType').value;
+            const requirements = document.getElementById('requirementsInput').value;
+            
+            console.log('Dataset name:', datasetName);
+            console.log('Hours count:', hoursCount);
+            console.log('Collection type:', collectionType);
+            console.log('Dataset requirements:', requirements);
+            
+            // Here you would typically send the data to a server
+            
+            // Show a brief confirmation message before redirecting
+            alert('Requirements submitted successfully! Redirecting to confirmation page...');
+            
+            // Redirect to another page after submission
+            // Replace "confirmation.html" with the actual page you want to redirect to
+            window.location.href = "confirmation.html";
+        });
+    </script>
+</body>
+</html>

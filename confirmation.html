@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Confirmed</title>
+    <style>
+        /* Apple-inspired design system */
+        :root {
+            --bg-color: #000000;
+            --text-color: #f5f5f7;
+            --accent-color: rgb(203, 251, 81);
+            --secondary-bg: #1d1d1f;
+            --input-bg: rgba(255, 255, 255, 0.06);
+            --blur-bg: rgba(30, 30, 32, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Logo container */
+        .logo-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+        
+        .logo {
+            height: 60px;
+            width: auto;
+        }
+        
+        /* Canvas container for animation */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background-color: var(--bg-color);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--text-color), rgba(203, 251, 81, 0.8));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .confirmation-message {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+        
+        .details {
+            background: var(--secondary-bg);
+            border-radius: 1.2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+        
+        .details h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+        }
+        
+        .details p {
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .back-btn {
+            background-color: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        
+        .back-btn:hover {
+            background-color: rgba(203, 251, 81, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: var(--accent-color);
+            stroke-miterlimit: 10;
+            margin: 0 auto 2rem auto;
+            position: relative;
+        }
+        
+        .checkmark::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(203, 251, 81, 0.3) 0%, rgba(203, 251, 81, 0) 70%);
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                width: 100%;
+                height: 100%;
+                opacity: 0.7;
+            }
+            70% {
+                width: 150%;
+                height: 150%;
+                opacity: 0;
+            }
+            100% {
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+            }
+        }
+        
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: var(--accent-color);
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="/Users/eliechelly/Desktop/deplace_mock_website/assets/Deplace Name Logo No-Background Signature.png" alt="Deplace Logo" class="logo">
+    </div>
+
+    <!-- Canvas container for contributor network animation -->
+    <div id="canvas-container">
+        <canvas id="contributors-canvas"></canvas>
+    </div>
+    
+    <div class="container">
+        <!-- Removed the glass-bg div -->
+        
+        <!-- Animated checkmark -->
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+        
+        <h1>Submission Successful</h1>
+        <p class="confirmation-message">Your dataset requirements have been received.</p>
+        
+        <div class="details">
+            <h2>What's Next?</h2>
+            <p>Our team will review your requirements and contact you to provide a detailed quote and preliminary sample.</p>
+            <p>Upon your approval, we'll initiate large-scale data collection and annotation for your dataset.</p>
+            <p>For immediate assistance, please contact our support team.</p>
+        </div>
+        
+        <a href="index.html" class="back-btn">Return to Form</a>
+    </div>
+
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the canvas element
+            const canvas = document.getElementById('contributors-canvas');
+            const container = document.getElementById('canvas-container');
+            
+            // Set canvas size to match container
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            // Get the canvas context for drawing
+            const ctx = canvas.getContext('2d');
+            
+            // Sample contributor data - replace with your actual image paths
+            // Make sure these paths are relative to your HTML file or use absolute URLs
+const contributors = [
+                { id: 1, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person1.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 2, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person2.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 3, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person3.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 4, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person4.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 5, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person5.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 6, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person6.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 7, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person7.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 8, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person8.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 9, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person9.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 10, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person10.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 11, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person11.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 12, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person12.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 13, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person13.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 14, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person14.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 15, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person15.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 16, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person16.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 17, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person17.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 18, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person18.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 19, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person19.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 20, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person20.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 21, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person21.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 22, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person22.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 23, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person23.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 24, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person24.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 25, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person25.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 26, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person26.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 27, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person27.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 28, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person28.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 29, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person29.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 30, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person30.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 31, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person31.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 32, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person32.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 33, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person33.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 34, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person34.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 35, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person35.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 36, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person36.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 37, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person37.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 38, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person38.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 39, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person39.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 40, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person40.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 41, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person41.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 42, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person42.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 43, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person43.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 44, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person44.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 45, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person45.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 46, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person46.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 47, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person47.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 48, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person48.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 49, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person49.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 50, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person50.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 51, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person51.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 52, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person52.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 53, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person53.png', x: 0, y: 0, vx: 0, vy: 0 },
+                { id: 54, radius: 25, imageSrc: '/Users/eliechelly/Desktop/deplace_mock_website/assets/person54.png', x: 0, y: 0, vx: 0, vy: 0 }
+            ];
+            
+            // Initialize contributor positions and velocities
+            function initializeContributors() {
+                contributors.forEach(contributor => {
+                    // Random position within canvas bounds, but avoid center
+                    let x, y, distanceToCenter;
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    const minDistanceFromCenter = 150; // Minimum distance from center
+                    
+                    // Keep generating positions until we get one that's not too close to center
+                    do {
+                        x = Math.random() * (canvas.width - 2 * contributor.radius) + contributor.radius;
+                        y = Math.random() * (canvas.height - 2 * contributor.radius) + contributor.radius;
+                        const dx = x - centerX;
+                        const dy = y - centerY;
+                        distanceToCenter = Math.sqrt(dx * dx + dy * dy);
+                    } while (distanceToCenter < minDistanceFromCenter);
+                    
+                    contributor.x = x;
+                    contributor.y = y;
+                    
+                    // Initialize with moderate but consistent velocity
+                    const speed = 0.5; // Moderate speed for bouncing effect
+                    const angle = Math.random() * Math.PI * 2; // Random direction
+                    contributor.vx = Math.cos(angle) * speed;
+                    contributor.vy = Math.sin(angle) * speed;
+                    
+                    // Preload image
+                    contributor.imageObj = new Image();
+                    contributor.imageObj.src = contributor.imageSrc;
+                    contributor.imageObj.onload = function() {
+                        contributor.image = true;
+                    };
+                });
+            }
+            
+            // Handle window resize
+            function handleResize() {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                
+                // Adjust contributor positions if needed to stay in bounds
+                contributors.forEach(contributor => {
+                    if (contributor.x < contributor.radius) {
+                        contributor.x = contributor.radius;
+                    } else if (contributor.x > canvas.width - contributor.radius) {
+                        contributor.x = canvas.width - contributor.radius;
+                    }
+                    
+                    if (contributor.y < contributor.radius) {
+                        contributor.y = contributor.radius;
+                    } else if (contributor.y > canvas.height - contributor.radius) {
+                        contributor.y = canvas.height - contributor.radius;
+                    }
+                });
+            }
+            
+            // Check collision between two circles
+            function checkCollision(circle1, circle2) {
+                const dx = circle2.x - circle1.x;
+                const dy = circle2.y - circle1.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                return distance < (circle1.radius + circle2.radius);
+            }
+            
+            // Handle collision response - conserves momentum and energy
+            function resolveCollision(circle1, circle2) {
+                const dx = circle2.x - circle1.x;
+                const dy = circle2.y - circle1.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // Normalize collision vector
+                const nx = dx / distance;
+                const ny = dy / distance;
+                
+                // Calculate relative velocity
+                const relativeVelocityX = circle2.vx - circle1.vx;
+                const relativeVelocityY = circle2.vy - circle1.vy;
+                
+                // Calculate relative velocity in terms of the normal direction
+                const velocityAlongNormal = relativeVelocityX * nx + relativeVelocityY * ny;
+                
+                // Do not resolve if objects are moving away from each other
+                if (velocityAlongNormal > 0) return;
+                
+                // Perfect elastic collision (e = 1)
+                const restitution = 1.0;
+                
+                // Use equal mass for all circles for simplicity
+                const m1 = 1;
+                const m2 = 1;
+                const mass_ratio_1 = 2 * m2 / (m1 + m2);
+                const mass_ratio_2 = 2 * m1 / (m1 + m2);
+                
+                // Apply impulse along the normal direction only
+                circle1.vx += mass_ratio_1 * velocityAlongNormal * nx;
+                circle1.vy += mass_ratio_1 * velocityAlongNormal * ny;
+                circle2.vx -= mass_ratio_2 * velocityAlongNormal * nx;
+                circle2.vy -= mass_ratio_2 * velocityAlongNormal * ny;
+                
+                // Move circles apart to prevent sticking
+                const overlap = (circle1.radius + circle2.radius) - distance;
+                const correctionX = (overlap / 2) * nx;
+                const correctionY = (overlap / 2) * ny;
+                
+                circle1.x -= correctionX;
+                circle1.y -= correctionY;
+                circle2.x += correctionX;
+                circle2.y += correctionY;
+            }
+            
+            // Draw a contributor with circular clipped image
+            function drawContributor(contributor) {
+                // Skip if image isn't loaded yet
+                if (!contributor.image) {
+                    // Create image object if it doesn't exist yet
+                    if (!contributor.imageObj) {
+                        contributor.imageObj = new Image();
+                        contributor.imageObj.src = contributor.imageSrc;
+                        contributor.imageObj.onload = function() {
+                            contributor.image = true;
+                        };
+                    }
+                    return;
+                }
+                
+                // Draw circular clipped image
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(contributor.x, contributor.y, contributor.radius, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.clip();
+                
+                // Draw the image
+                ctx.drawImage(
+                    contributor.imageObj,
+                    contributor.x - contributor.radius,
+                    contributor.y - contributor.radius,
+                    contributor.radius * 2,
+                    contributor.radius * 2
+                );
+                
+                // Add border
+                ctx.beginPath();
+                ctx.arc(contributor.x, contributor.y, contributor.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; // Brighter white border
+                ctx.lineWidth = 2; // Thicker border
+                ctx.stroke();
+                
+                ctx.restore();
+            }
+            
+            // Animation variables
+            let animationFrameId;
+            const friction = 1.0; // No friction/damping (1.0 = no slowdown)
+            
+            // Helper function to draw connection lines
+            function drawConnectionLine(x1, y1, x2, y2, distance) {
+                const maxDistance = 150;
+                if (distance > maxDistance) return;
+                
+                // Higher base opacity and slower fade for better visibility
+                const opacity = (1 - (distance / maxDistance) * 0.7) * 0.8;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.lineWidth = 1.2; // Thicker lines
+                ctx.stroke();
+            }
+            
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw connections between contributors - white lines
+                for (let i = 0; i < contributors.length; i++) {
+                    for (let j = i + 1; j < contributors.length; j++) {
+                        const circle1 = contributors[i];
+                        const circle2 = contributors[j];
+                        
+                        // Skip if images aren't loaded yet
+                        if (!circle1.image || !circle2.image) continue;
+                        
+                        const dx = circle2.x - circle1.x;
+                        const dy = circle2.y - circle1.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        // Draw a line if circles are close enough
+                        if (distance < 150) {
+                            drawConnectionLine(circle1.x, circle1.y, circle2.x, circle2.y, distance);
+                        }
+                    }
+                }
+                
+                // Handle collisions between contributors
+                for (let i = 0; i < contributors.length; i++) {
+                    for (let j = i + 1; j < contributors.length; j++) {
+                        if (checkCollision(contributors[i], contributors[j])) {
+                            resolveCollision(contributors[i], contributors[j]);
+                        }
+                    }
+                }
+                
+                // Update positions and handle wall collisions
+                contributors.forEach(contributor => {
+                    // Add center repulsion effect
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    const dx = contributor.x - centerX;
+                    const dy = contributor.y - centerY;
+                    const distanceToCenter = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Calculate repulsion force - stronger when closer to center
+                    const repulsionRadius = 300; // Radius of effect
+                    if (distanceToCenter < repulsionRadius) {
+                        // Normalize direction vector
+                        const nx = dx / distanceToCenter;
+                        const ny = dy / distanceToCenter;
+                        
+                        // Force is stronger closer to center (inverse relationship)
+                        const repulsionStrength = 0.18 * (1 - distanceToCenter / repulsionRadius);
+                        
+                        // Apply repulsion force
+                        contributor.vx += nx * repulsionStrength;
+                        contributor.vy += ny * repulsionStrength;
+                    }
+                    
+                    // Update position
+                    contributor.x += contributor.vx;
+                    contributor.y += contributor.vy;
+                    
+                    // Wall collision - right and left - perfect elastic collision
+                    if (contributor.x + contributor.radius > canvas.width) {
+                        contributor.x = canvas.width - contributor.radius;
+                        contributor.vx = -Math.abs(contributor.vx); // Ensure proper direction
+                    } else if (contributor.x - contributor.radius < 0) {
+                        contributor.x = contributor.radius;
+                        contributor.vx = Math.abs(contributor.vx); // Ensure proper direction
+                    }
+                    
+                    // Wall collision - bottom and top - perfect elastic collision
+                    if (contributor.y + contributor.radius > canvas.height) {
+                        contributor.y = canvas.height - contributor.radius;
+                        contributor.vy = -Math.abs(contributor.vy); // Ensure proper direction
+                    } else if (contributor.y - contributor.radius < 0) {
+                        contributor.y = contributor.radius;
+                        contributor.vy = Math.abs(contributor.vy); // Ensure proper direction
+                    }
+                    
+                    // Draw the contributor
+                    drawContributor(contributor);
+                });
+                
+                // Continue animation
+                animationFrameId = requestAnimationFrame(animate);
+            }
+            
+            // Handle resize event
+            window.addEventListener('resize', handleResize);
+            
+            // Initialize and start animation
+            initializeContributors();
+            animate();
+            
+            // Clean up on page unload
+            window.addEventListener('beforeunload', () => {
+                cancelAnimationFrame(animationFrameId);
+                window.removeEventListener('resize', handleResize);
+            });
+        });
+    </script>
+</body>
+</html>
